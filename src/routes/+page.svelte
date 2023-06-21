@@ -94,12 +94,20 @@
 					}
 				}).then((res) => res.json())
 				.then((data) => {
-					if(data.message) return console.log(data.message);
-					storage.itemData.push({
-							id: i,
-							data: data[0]
-					});
-					
+					if(!data.message && !data.error) {
+						storage.itemData.push({
+								id: i,
+								data: data[0]
+						});
+					} else {
+						allItems.splice(allItems.indexOf(i), 1);
+						let msg = data.message || data.error.message;
+						toast.error(`Item ${i} failed: ` + msg, {
+							position: "bottom-center",
+							style: 'border-radius: 200px; background: #c93c3c; color: white;'
+						});
+					}
+
 					if(storage.itemData.length === allItems.length) {
 						storage.itemData = storage.itemData; // fuck svelte
 						resolve(storage.itemData);
@@ -130,7 +138,7 @@
 			.then((res) => res.json())
 			.then((data) => {
 				if(data.message) return reject(data.message);
-				if(data.error) return reject(data.error.message);
+				if(data.error) return reject(data.error);
 
 				if(!data.profile.error && !data.avatar.error) {
 					storage.hasStorage = true;
