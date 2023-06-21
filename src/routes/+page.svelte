@@ -94,7 +94,7 @@
 					}
 				}).then((res) => res.json())
 				.then((data) => {
-					if(data.error) return console.log(data.error.message);
+					if(data.message) return console.log(data.message);
 					storage.itemData.push({
 							id: i,
 							data: data[0]
@@ -129,7 +129,7 @@
 			})
 			.then((res) => res.json())
 			.then((data) => {
-				if(data.error) return reject(data.error.message);
+				if(data.message) return reject(data.message);
 				if(!data.profile.error && !data.avatar.error) {
 					storage.hasStorage = true;
 					storage.profileData = data;
@@ -179,7 +179,7 @@
 			})
 			.then((res) => res.json())
 			.then((data) => {
-				if(data.error) return reject(data.error.message);
+				if(data.message) return reject(data.message);
 				if(data.id) {
 					storage.hasStorage = false;
 					storage.id = data.id;
@@ -207,7 +207,7 @@
 
 	// ^[a-zA-Z0-9[\].,_-]{3,26}$
 	function validateUsername(/** @type {string} */ user) {
-		return /^[a-zA-Z0-9[\].,_-]{3,26}$/.test(user);
+		return /^[a-zA-Z0-9[\] .,_-]{3,26}$/.test(user);
 	};
 	</script>
 
