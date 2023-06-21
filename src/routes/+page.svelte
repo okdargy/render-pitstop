@@ -130,6 +130,8 @@
 			.then((res) => res.json())
 			.then((data) => {
 				if(data.message) return reject(data.message);
+				if(data.error) return reject(data.error.message);
+
 				if(!data.profile.error && !data.avatar.error) {
 					storage.hasStorage = true;
 					storage.profileData = data;
@@ -180,6 +182,8 @@
 			.then((res) => res.json())
 			.then((data) => {
 				if(data.message) return reject(data.message);
+				if(data.error) return reject(data.error.message);
+				
 				if(data.id) {
 					storage.hasStorage = false;
 					storage.id = data.id;
