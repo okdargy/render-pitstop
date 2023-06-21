@@ -9,8 +9,40 @@
 		itemData: []
 	};
 
-	async function downloadGET() {
-		toast.success("Successfully toasted!");
+	function downloadZip() {
+		if(!storage.hasStorage) return toast.error("You must grab a user first!");
+
+		toast.promise(new Promise(async (resolve, reject) => {
+			let res = await fetch('/downloadZip', {
+				method: 'POST',
+				body: JSON.stringify(storage.itemData),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+
+			if(!res.ok) return reject(res.statusText);
+
+			let blob = await res.blob();
+			var url = window.URL || window.webkitURL;
+			let link = url.createObjectURL(blob);
+
+				// generate anchor tag, click it for download and then remove it again
+			let a = document.createElement("a");
+			a.setAttribute("download", `dargy-export-${Date.now()}.zip`);
+			a.setAttribute("href", link);
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			return resolve(res);
+		}), {
+			loading: "Downloading avatar...",
+			success: "Successfully downloaded avatar!",
+			error: "Failed to download avatar! Please try again.",
+		}, {
+			position: "bottom-center",
+			style: 'border-radius: 200px; background: #e6e6e6'
+		})
 	}
 
 	function getItemData(avatar) {
@@ -203,9 +235,10 @@
 		<div class="max-w-lg mx-auto mt-3">
 			<div class="grid place-items-center">
 				<img src={"https://api.brick-hill.com/v1/thumbnails/single?type=1&id=" + storage.profileData.profile.id} alt="avatar" class="rounded-full w-64 h-64 border-2 p-5 shadow-lg" />
+				<button class="px-5 py-2 mt-4 text-white rounded-md bg-green-600" on:click={downloadZip}>Download as ZIP</button>
 			</div>
 		</div>
-	<div class="max-w-lg mx-auto mt-4 gap-5">
+	<div class="max-w-lg mx-auto mt-3 gap-5">
 		{#each storage.itemData as item}
 			<div class="flex p-3 rounded-md shadow-md mb-2">
 				<img src={"https://api.brick-hill.com/v1/thumbnails/single?type=2&id=" + item.id} alt="item" class="float-left w-24 h-24 border-2 p-5 shadow-lg" />
