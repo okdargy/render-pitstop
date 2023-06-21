@@ -183,10 +183,11 @@
 			.then((data) => {
 				if(data.message) return reject(data.message);
 				if(data.error) return reject(data.error.message);
-				
+
 				if(data.id) {
 					storage.hasStorage = false;
 					storage.id = data.id;
+					storage.username = data.username;
 					storage.itemData = [];
 					storage.profileData = [];
 
