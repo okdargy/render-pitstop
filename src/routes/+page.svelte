@@ -3,6 +3,7 @@
 
 	let storage = {
 		hasStorage: false,
+		saveAsNames: false,
 		id: 0,
 		username: '',
 		profileData: [],
@@ -15,7 +16,11 @@
 		toast.promise(new Promise(async (resolve, reject) => {
 			let res = await fetch('/downloadZip', {
 				method: 'POST',
-				body: JSON.stringify(storage.itemData),
+				body: JSON.stringify({
+					assets: storage.itemData,
+					saveAsNames: storage.saveAsNames,
+					profile: storage.profileData.profile
+				}),
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -29,7 +34,8 @@
 
 				// generate anchor tag, click it for download and then remove it again
 			let a = document.createElement("a");
-			a.setAttribute("download", `dargy-export-${Date.now()}.zip`);
+			const date = new Date(Date.now());
+			a.setAttribute("download", `${storage.profileData.profile.username}-export-${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}.zip`);
 			a.setAttribute("href", link);
 			document.body.appendChild(a);
 			a.click();
@@ -231,10 +237,13 @@
 
 	<section>
 	<div class="max-w-lg mx-auto mt-3">
-		<div class="isolate -space-y-px rounded-md shadow-sm">
-			<div class="relative border border-gray-300 rounded-md px-3 py-2 focus-within:z-10 focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+	<div class="isolate -space-y-px rounded-md">
+		<div class="mb-3 relative border border-gray-300 rounded-md px-3 py-2 focus-within:z-10 focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
 			<label for="username" class="block w-full text-xs font-medium text-gray-700">Username</label>
 			<input bind:value={storage.username} name="username" id="username" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm" placeholder="Maxed1" />
+			<div class="flex items-center mt-3">
+				<input bind:checked={storage.saveAsNames} id="default-checkbox" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+				<label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Save files as item name</label>
 			</div>
 		</div>
 
@@ -247,7 +256,7 @@
 	{#if storage.hasStorage}
 		<div class="max-w-lg mx-auto mt-3">
 			<div class="grid place-items-center">
-				<img src={"https://api.brick-hill.com/v1/thumbnails/single?type=1&id=" + storage.profileData.profile.id} alt="avatar" class="rounded-full w-64 h-64 border-2 p-5 shadow-lg" />
+				<img src={"https://api.brick-hill.com/v1/thumbnails/single?type=1&id=" + storage.profileData.profile.id} alt="avatar" class="rounded-full w-64 h-64 border-2 p-5" />
 				<button class="px-5 py-2 mt-4 text-white rounded-md bg-green-600" on:click={downloadZip}>Download as ZIP</button>
 			</div>
 		</div>
