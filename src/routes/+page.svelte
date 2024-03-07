@@ -87,7 +87,6 @@
 					if(avatar.items.clothing[i] !== 0) allItems.push(avatar.items.clothing[i]);
 				}
 			}
-			console.log(allItems)
 
 			allItems.forEach(i => {
 				fetch('/getPoly', {

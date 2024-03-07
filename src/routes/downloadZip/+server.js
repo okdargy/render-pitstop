@@ -11,13 +11,10 @@ export async function POST({ request }) {
 
     if(!saveAsNames) saveAsNames = false;
 
-    console.log(saveAsNames)
-
     const zip = new JSZip();
 
     for(let i = 0; i < assets.length; i++) {
         const asset = assets[i];
-        console.log(asset);
         let name = asset.id;
         
         if(saveAsNames) {
@@ -32,7 +29,6 @@ export async function POST({ request }) {
 
             const image = await (await fetch(imgurl)).arrayBuffer();
             zip.file(name + '.png', image);
-            console.log('zipping image')
         }
 
         if(asset.data.mesh) {
@@ -41,7 +37,6 @@ export async function POST({ request }) {
 
             const mesh = await (await fetch(meshurl)).arrayBuffer();
             zip.file(name + '.obj', mesh);
-            console.log('zipping mesh')
         }
     }
     
@@ -49,7 +44,6 @@ export async function POST({ request }) {
     const date = new Date(Date.now());
 
     // see FileSaver.js
-    console.log("sending zip")
     return new Response(
         content, {
         status: 200,
